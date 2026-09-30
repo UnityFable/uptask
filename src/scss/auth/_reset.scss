@@ -1,0 +1,20 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.reset {
+  margin-top: 5rem;
+
+  .uptask {
+    @include m.gradientColor(v.$pink);
+  }
+
+  input[type="submit"] {
+    @include m.button(v.$pink, v.$white)
+  }
+
+  .actions {
+    a {
+      color: v.$pink;
+    }
+  }
+}

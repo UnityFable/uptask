@@ -1,0 +1,24 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+@use 'sass:color';
+
+.form {
+  margin-top: 5rem;
+
+  .field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    label {
+      flex: 0 0 15rem;
+    }
+
+    input {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      background-color: color.adjust(v.$grey, $lightness: 40%);
+    }
+  }
+}

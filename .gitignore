@@ -1,0 +1,7 @@
+package-lock.json
+vendor/
+.DS_Store
+node_modules/
+composer.lock
+.env
+dist/
