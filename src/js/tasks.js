@@ -58,6 +58,9 @@
       deleteTaskBTN.classList.add('delete-task');
       deleteTaskBTN.dataset.taskId = task.id;
       deleteTaskBTN.textContent = 'Eliminar';
+      deleteTaskBTN.ondblclick = () => {
+        confirmDeleteTask({ ...task });
+      };
 
       optionsDiv.appendChild(taskStatusBTN);
       optionsDiv.appendChild(deleteTaskBTN);
@@ -75,8 +78,73 @@
     updateTask(task);
   }
 
-  function updateTask(task) {
-    
+  async function updateTask(task) {
+    const { id, name, status } = task;
+
+    const data = new FormData();
+    data.append('name', name);
+    data.append('status', status);
+    data.append('projectUrl', getProjectUrl());
+    data.append('id', id);
+
+    try {
+      const url = '/api/task/update';
+      const response = await fetch(url, {
+        method: 'POST',
+        body: data
+      });
+      const result = await response.json();
+      showAlert(result.response.message, result.response.type, document.querySelector('.container-new-task'));
+      if (result.response.type === 'success') {
+        tasks = tasks.map(task => {
+          if (task.id === result.response.id) {
+            task.status = status;
+          }
+          return task;
+        });
+        showTasks(tasks);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function confirmDeleteTask(task) {
+    Swal.fire({
+      title: '¿Estás seguro de querer eliminar esta tarea?',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        deleteTask(task);
+      }
+    });
+  }
+
+  async function deleteTask(task) {
+    const { id } = task;
+    const data = new FormData();
+    data.append('id', id);
+    data.append('projectUrl', getProjectUrl());
+
+    try {
+      const url = '/api/task/delete';
+      const response = await fetch(url, {
+        method: 'POST',
+        body: data
+      });
+      const result = await response.json();
+      // showAlert(result.response.message, result.response.type, document.querySelector('.container-new-task'));
+      Swal.fire('Eliminado!', result.response.message, result.response.type);
+      if (result.response.type === 'success') {
+        tasks = tasks.filter(task => task.id !== id);
+        showTasks(tasks);
+      }
+    }
+    catch (error) {
+      console.error(error);
+    }
   }
 
   function showForm() {
@@ -134,7 +202,7 @@
     const previousAlert = document.querySelector('.alert');
     if (previousAlert) previousAlert.remove();
     const alert = document.createElement('DIV');
-    alert.classList.add('alert', type);
+    alert.classList.add('alert', type, 'margin-top-1rem');
     alert.textContent = msg;
 
     reference.parentElement.insertBefore(alert, reference.nextElementSibling);

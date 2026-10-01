@@ -62,12 +62,84 @@ class TaskController
   public static function update()
   {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      if (!isset($_SESSION)) session_start();
+      $project = Project::where('url', $_POST['projectUrl']);
+      if (!$project || $project->user_id !== $_SESSION['id']) {
+        $response = [
+          'type' => 'error',
+          'message' => 'No se pudo actualizar la tarea'
+        ];
+        echo json_encode(['response' => $response]);
+        return;
+      }
+
+      $task = Task::find($_POST['id']);
+      if (!$task || $task->project_id !== $project->id) {
+        $response = [
+          'type' => 'error',
+          'message' => 'No se pudo actualizar la tarea'
+        ];
+
+        echo json_encode(['response' => $response]);
+        return;
+      }
+
+      $task->sync($_POST);
+      $result = $task->save();
+      if ($result) {
+        $response = [
+          'type' => 'success',
+          'message' => 'Tarea actualizada correctamente',
+          'id' => $task->id,
+          'projectId' => $project->id
+        ];
+      } else {
+        $response = [
+          'type' => 'error',
+          'message' => 'No se pudo actualizar la tarea'
+        ];
+      }
+      echo json_encode(['response' => $response]);
     }
   }
 
   public static function delete()
   {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      if (!isset($_SESSION)) session_start();
+      $project = Project::where('url', $_POST['projectUrl']);
+      if (!$project || $project->user_id !== $_SESSION['id']) {
+        $response = [
+          'type' => 'error',
+          'message' => 'No se pudo eliminar la tarea'
+        ];
+        echo json_encode(['response' => $response]);
+        return;
+      }
+
+      $task = Task::find($_POST['id']);
+      if (!$task || $task->project_id !== $project->id) {
+        $response = [
+          'type' => 'error',
+          'message' => 'No se pudo eliminar la tarea'
+        ];
+        echo json_encode(['response' => $response]);
+        return;
+      }
+
+      $result = $task->delete();
+      if ($result) {
+        $response = [
+          'type' => 'success',
+          'message' => 'Tarea eliminada correctamente',
+        ];
+      } else {
+        $response = [
+          'type' => 'error',
+          'message' => 'No se pudo eliminar la tarea'
+        ];
+      }
+      echo json_encode(['response' => $response]);
     }
   }
 }
