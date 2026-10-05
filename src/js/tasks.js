@@ -2,7 +2,7 @@
   getTasks();
   let tasks = [];
   const addTaskButton = document.querySelector('#add-task');
-  addTaskButton.addEventListener('click', showForm);
+  addTaskButton.addEventListener('click', () => showForm());
 
   async function getTasks() {
     try {
@@ -44,6 +44,9 @@
 
       const optionsDiv = document.createElement('DIV');
       optionsDiv.classList.add('options');
+      taskName.ondblclick = () => {
+        showForm(true, { ...task });
+      };
 
       const taskStatusBTN = document.createElement('BUTTON');
       taskStatusBTN.classList.add('task-status');
@@ -94,14 +97,17 @@
         body: data
       });
       const result = await response.json();
-      showAlert(result.response.message, result.response.type, document.querySelector('.container-new-task'));
+      Swal.fire(result.response.message, result.response.message, result.response.type);
       if (result.response.type === 'success') {
         tasks = tasks.map(task => {
           if (task.id === result.response.id) {
+            task.name = name;
             task.status = status;
           }
           return task;
         });
+        const modal = document.querySelector('.modal');
+        if (modal) modal.remove();
         showTasks(tasks);
       }
     } catch (error) {
@@ -147,15 +153,15 @@
     }
   }
 
-  function showForm() {
+  function showForm(edit = false, task = null) {
     const modal = document.createElement('DIV');
     modal.classList.add('modal');
     modal.innerHTML = `
       <form class="form new-task">
-        <legend>Agrega una nueva tarea</legend>
+        <legend>${edit ? 'Editar tarea' : 'Agrega una nueva tarea'}</legend>
         <div class="field">
-          <label>Tarea</label>
-          <input type="text" name="task" id="task" placeholder="Nombre Tarea">
+          <label for="task">Tarea</label>
+          <input type="text" name="task" id="task" placeholder="Nombre Tarea" value="${edit ? task.name : ''}">
         </div>
         <div class="options">
           <input type="submit" class="submit-new-task" value="Guardar">
@@ -179,23 +185,24 @@
       }
 
       if (e.target.classList.contains('submit-new-task')) {
-        submitFormNewTask();
+        const name = document.querySelector('#task').value.trim();
+
+        if (name === '') {
+          const legend = document.querySelector('.form legend');
+          showAlert('El nombre de la tarea es obligatorio', 'error', legend);
+          return;
+        }
+
+        if (edit) {
+          task.name = name;
+          updateTask(task);
+        } else {
+          saveTask(name);
+        }
       }
     });
 
     document.querySelector('.dashboard').appendChild(modal);
-  }
-
-  function submitFormNewTask() {
-    const task = document.querySelector('#task').value.trim();
-
-    if (task === '') {
-      const legend = document.querySelector('.form legend');
-      showAlert('El nombre de la tarea es obligatorio', 'error', legend);
-      return;
-    }
-
-    saveTask(task);
   }
 
   function showAlert(msg, type, reference) {

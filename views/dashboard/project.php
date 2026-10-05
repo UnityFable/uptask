@@ -7,6 +7,24 @@
     </button>
   </div>
 
+  <div id="filters" class="filters">
+    <div class="filters-inputs">
+      <h2>Filtros:</h2>
+      <div class="field">
+        <label for="all">Todas</label>
+        <input type="radio" id="all" name="filter" value="" checked>
+      </div>
+      <div class="field">
+        <label for="completed">Finalizadas</label>
+        <input type="radio" id="completed" name="filter" value="1">
+      </div>
+      <div class="field">
+        <label for="pending">Pendientes</label>
+        <input type="radio" id="pending" name="filter" value="0">
+      </div>
+    </div>
+  </div>
+
   <ul id="task-list" class="task-list"></ul>
 </div>
 
