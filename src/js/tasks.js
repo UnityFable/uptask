@@ -1,6 +1,7 @@
 (() => {
   getTasks();
   let tasks = [];
+  let filtered = [];
   const addTaskButton = document.querySelector('#add-task');
   addTaskButton.addEventListener('click', () => showForm());
 
@@ -11,16 +12,35 @@
       const response = await fetch(url);
       const data = await response.json();
       tasks = data.tasks;
-      showTasks(tasks);
+      showTasks();
     } catch (error) {
       console.error(error);
     }
   }
 
-  function showTasks(tasks) {
+  const filters = document.querySelectorAll('#filters input[type="radio"]');
+  filters.forEach(filter => {
+    filter.addEventListener('input', filterTasks);
+  });
+
+  function filterTasks(e) {
+    const filter = e.target.value;
+    if (filter !== '') {
+      filtered = tasks.filter(task => task.status === Number(filter));
+    } else {
+      filtered = [];
+    }
+
+    showTasks();
+  }
+
+  function showTasks() {
     cleanTasks();
+    totalPending();
+    totalCompleted();
+    const taskArray = filtered.length ? filtered : tasks;
     const taskList = document.querySelector('#task-list');
-    if (tasks.length === 0) {
+    if (taskArray.length === 0) {
       const textNoTasks = document.createElement('LI');
       textNoTasks.textContent = 'No hay tareas';
       textNoTasks.classList.add('no-tasks');
@@ -34,7 +54,7 @@
       1: 'Finalizada'
     };
 
-    tasks.forEach(task => {
+    taskArray.forEach(task => {
       const taskContainer = document.createElement('LI');
       taskContainer.dataset.taskId = task.id;
       taskContainer.classList.add('task');
@@ -108,7 +128,7 @@
         });
         const modal = document.querySelector('.modal');
         if (modal) modal.remove();
-        showTasks(tasks);
+        showTasks();
       }
     } catch (error) {
       console.error(error);
@@ -145,11 +165,33 @@
       Swal.fire('Eliminado!', result.response.message, result.response.type);
       if (result.response.type === 'success') {
         tasks = tasks.filter(task => task.id !== id);
-        showTasks(tasks);
+        showTasks();
       }
     }
     catch (error) {
       console.error(error);
+    }
+  }
+
+  function totalPending() {
+    const totalPending = tasks.filter(task => task.status === 0);
+    const pendingRadio = document.querySelector('#pending');
+
+    if (totalPending.length === 0) {
+      pendingRadio.disabled = true;
+    } else {
+      pendingRadio.disabled = false;
+    }
+  }
+
+  function totalCompleted() {
+    const totalCompleted = tasks.filter(task => task.status === 1);
+    const completedRadio = document.querySelector('#completed');
+
+    if (totalCompleted.length === 0) {
+      completedRadio.disabled = true;
+    } else {
+      completedRadio.disabled = false;
     }
   }
 
@@ -247,7 +289,7 @@
           };
 
           tasks = [...tasks, taskObj];
-          showTasks(tasks);
+          showTasks();
         }, 2000);
 
       }
