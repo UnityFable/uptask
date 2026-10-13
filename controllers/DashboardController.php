@@ -123,8 +123,8 @@ class DashboardController
           if ($result) User::setAlert('success', 'Contraseña actualizada correctamente');
         }
       }
+      $alerts = $user->getAlerts();
     }
-    $alerts = $user->getAlerts();
 
     $router->render('dashboard/change-password', [
       'title' => 'Cambiar Contraseña',

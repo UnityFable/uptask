@@ -1,0 +1,121 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+@use 'sass:color';
+
+@media (prefers-color-scheme: dark) {
+  $darkGrey: #2c2c3b;
+
+  body {
+    background-color: $darkGrey;
+  }
+
+  .tagline,
+  .form label,
+  .login .actions a,
+  .register .actions a,
+  .reset .actions a {
+    color: v.$white;
+  }
+
+  .form .field input,
+  .dashboard .form input:not([type="submit"]) {
+    background-color: color.adjust($darkGrey, $lightness: 15%);
+    &::placeholder {
+      color: color.adjust(v.$lightGrey, $lightness: -20%);
+    }
+  }
+
+  .page-description,
+  .page-name,
+  .form .field input,
+  .dashboard .form input:not([type="submit"]) {
+    color: v.$lightGrey;
+  }
+
+  .alert.error {
+    background-color: v.$white;
+  }
+
+  .sidebar {
+    .sidebar-nav a {
+
+      &.selected,
+      &:hover {
+        background-color: v.$orange;
+      }
+    }
+
+    @include m.tablet {
+      background-color: color.adjust($darkGrey, $lightness: -5%);
+    }
+  }
+
+  .mobile-bar,
+  .bar {
+    background-color: color.adjust($darkGrey, $lightness: -7%);
+  }
+
+  .bar {
+    p {
+      color: v.$lightGrey;
+
+      span {
+        color: v.$orange;
+      }
+    }
+
+    .logout {
+      @include m.button(v.$orange, v.$white);
+      padding: 1rem;
+      font-size: 1.4rem;
+    }
+  }
+
+  .filters {
+    background-color: color.adjust($darkGrey, $lightness: 10%);
+
+    h2,
+    label {
+      color: v.$white;
+    }
+
+    input[type="radio"] {
+      accent-color: v.$orange;
+    }
+  }
+
+  .dashboard {
+    background-color: $darkGrey;
+
+    .link {
+      color: v.$lightGrey;
+
+      &:hover {
+        color: color.adjust(v.$lightGrey, $lightness: -20%);
+      }
+    }
+  }
+
+  .projects-list .project {
+    background-color: color.adjust($darkGrey, $lightness: 20%);
+
+    &:hover {
+      background-color: color.adjust($darkGrey, $lightness: 15%);
+    }
+  }
+
+  .task-list .task {
+    background-color: color.adjust($darkGrey, $lightness: 10%);
+
+    p {
+      color: v.$lightGrey;
+    }
+  }
+
+  .form.new-task {
+    background-color: $darkGrey;
+    legend {
+      color: v.$lightGrey;
+    }
+  }
+}
