@@ -26,9 +26,15 @@ export function js(done) {
   done()
 }
 
+export function img(done) {
+  src('src/img/**/*.svg')
+    .pipe(dest('./public/dist/img'));
+  done();
+}
+
 export function dev() {
   watch(paths.scss, css);
   watch(paths.js, js);
 }
 
-export default series(js, css, dev)
+export default series(js, css, img, dev);
