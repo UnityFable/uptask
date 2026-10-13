@@ -1,5 +1,6 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use 'sass:color';
 
 .dashboard {
   background-color: v.$lightGrey;
@@ -34,6 +35,13 @@
       text-transform: uppercase;
       font-weight: bold;
       font-size: 1.4rem;
+    }
+  }
+
+  .link {
+    color: v.$purple;
+    &:hover {
+      color: color.adjust(v.$purple, $lightness: -20%);
     }
   }
 }

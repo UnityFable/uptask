@@ -12,6 +12,9 @@ class User extends ActiveRecord
   public string $email;
   public string $password;
   public ?string $password2;
+  public ?string $oldPassword;
+  public ?string $newPassword;
+  public ?string $newPassword2;
   public ?string $token;
   public int $confirmed;
 
@@ -22,6 +25,9 @@ class User extends ActiveRecord
     $this->email = $args['email'] ?? '';
     $this->password = $args['password'] ?? '';
     $this->password2 = $args['password2'] ?? null;
+    $this->oldPassword = $args['oldPassword'] ?? null;
+    $this->newPassword = $args['newPassword'] ?? null;
+    $this->newPassword2 = $args['newPassword2'] ?? null;
     $this->token = $args['token'] ?? null;
     $this->confirmed = $args['confirmed'] ?? 0;
   }
@@ -78,6 +84,34 @@ class User extends ActiveRecord
     }
     if (!$this->password) {
       self::$alerts['error'][] = 'La contraseña es obligatoria';
+    }
+
+    return self::$alerts;
+  }
+
+  public function validateProfile() {
+    if (!$this->name) {
+      self::$alerts['error'][] = 'El nombre del Usuario es obligatorio';
+    }
+    if (!$this->email) {
+      self::$alerts['error'][] = 'El email es obligatorio';
+    } else if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+      self::$alerts['error'][] = 'Debe ingresar un correo electrónico válido';
+    }
+
+    return self::$alerts;
+  }
+
+  public function validateNewPassword() {
+    if (!$this->oldPassword) {
+      self::$alerts['error'][] = 'La Contraseña Actual es obligatoria';
+    }
+    if (!$this->newPassword) {
+      self::$alerts['error'][] = 'La Nueva Contraseña es obligatoria';
+    } else if (strlen($this->newPassword) < 6) {
+      self::$alerts['error'][] = 'La Nueva Contraseña debe tener minimo 6 caracteres';
+    } else if ($this->newPassword !== $this->newPassword2) {
+      self::$alerts['error'][] = 'Las contraseñas no coinciden';
     }
 
     return self::$alerts;

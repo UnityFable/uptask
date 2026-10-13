@@ -30,6 +30,8 @@ $router->get('/new-project', [DashboardController::class, 'newProject']);
 $router->post('/new-project', [DashboardController::class, 'newProject']);
 $router->get('/profile', [DashboardController::class, 'profile']);
 $router->post('/profile', [DashboardController::class, 'profile']);
+$router->get('/change-password', [DashboardController::class, 'changePassword']);
+$router->post('/change-password', [DashboardController::class, 'changePassword']);
 
 $router->get('/api/tasks', [TaskController::class, 'getAll']);
 $router->post('/api/task', [TaskController::class, 'create']);
